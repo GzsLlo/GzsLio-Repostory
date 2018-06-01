@@ -1,0 +1,88 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:p="http://www.springframework.org/schema/p"
+       xmlns:context="http://www.springframework.org/schema/context"
+       xmlns:mvc="http://www.springframework.org/schema/mvc"
+       xsi:schemaLocation="http://www.springframework.org/schema/beans
+                        http://www.springframework.org/schema/beans/spring-beans-4.0.xsd
+                        http://www.springframework.org/schema/context
+                        http://www.springframework.org/schema/context/spring-context-4.0.xsd
+                        http://www.springframework.org/schema/mvc
+                        http://www.springframework.org/schema/mvc/spring-mvc-4.0.xsd">
+
+  <!-- 自动扫描  @Controller-->
+  <context:component-scan base-package="com.onmyoji.controller"/>
+  <!-- 启用spring mvc 注解 -->
+  <mvc:annotation-driven/>
+
+  <mvc:default-servlet-handler/>
+
+  <!-- 访问静态资源 -->
+  <mvc:resources mapping="/static/**/" location="/static/" cache-period="31556926"/>
+  <mvc:resources mapping="/resource/**/" location="/resource/" cache-period="31556926"/>
+
+  <!--避免IE执行AJAX时，返回JSON出现下载文件 -->
+  <bean id="mappingJacksonHttpMessageConverter"
+        class="org.springframework.http.converter.json.MappingJackson2HttpMessageConverter">
+    <property name="supportedMediaTypes">
+      <list>
+        <value>text/html;charset=UTF-8</value>
+      </list>
+    </property>
+  </bean>
+  <!-- 启动SpringMVC的注解功能，完成请求和注解POJO的映射 -->
+  <bean class="org.springframework.web.servlet.mvc.annotation.AnnotationMethodHandlerAdapter">
+    <property name="messageConverters">
+      <list>
+        <ref bean="mappingJacksonHttpMessageConverter"/> <!-- JSON转换器 -->
+      </list>
+    </property>
+  </bean>
+
+  <!-- freemarker的配置文件 -->
+  <bean id="freemarkerConfiguration" class="org.springframework.beans.factory.config.PropertiesFactoryBean">
+    <property name="location" value="classpath:freemarker.properties"/>
+  </bean>
+
+  <!-- freemarker的配置 -->
+  <bean id="freemarkerConfig"
+        class="org.springframework.web.servlet.view.freemarker.FreeMarkerConfigurer">
+    <!-- 模版位置，这里配置了下面就不用配了 -->
+    <property name="templateLoaderPath" value="/WEB-INF/views/modules/"/>
+    <property name="freemarkerSettings" ref="freemarkerConfiguration"/><!-- 一些设置 -->
+  </bean>
+
+  <!-- freeMarker视图解析器 -->
+  <bean id="freemarkerViewResolver"
+        class="org.springframework.web.servlet.view.freemarker.FreeMarkerViewResolver">
+    <property name="viewClass" value="org.springframework.web.servlet.view.freemarker.FreeMarkerView"/>
+    <!--<property name="viewNames" value="*.ftl" />-->
+    <property name="contentType" value="text/html; charset=utf-8"/>
+    <property name="cache" value="false"/>
+    <property name="suffix" value=".ftl"/>
+    <!--作用百度即可-->
+    <property name="exposeRequestAttributes" value="true"/>
+    <property name="exposeSessionAttributes" value="true"/>
+    <property name="exposeSpringMacroHelpers" value="true"/>
+    <property name="requestContextAttribute" value="request"/>
+    <!-- 视图先走这个freemarker的，再走原始的 -->
+    <property name="order" value="1"/>
+  </bean>
+
+  <!-- 定义跳转的文件的前后缀 ，视图模式配置 -->
+  <bean class="org.springframework.web.servlet.view.InternalResourceViewResolver">
+    <property name="order" value="2"/><!-- 增加一个属性，如果找不到freemarker的模版则走原始的 -->
+    <property name="prefix" value="/WEB-INF/jsp/modules/"/>
+    <property name="suffix" value=".jsp"/>
+  </bean>
+
+  <!-- 文件上传配置 -->
+  <bean id="multipartResolver" class="org.springframework.web.multipart.commons.CommonsMultipartResolver">
+    <!-- 默认编码 -->
+    <property name="defaultEncoding" value="UTF-8"/>
+    <!-- 上传文件大小限制为31M，31*1024*1024 -->
+    <property name="maxUploadSize" value="32505856"/>
+    <!-- 内存中的最大值 -->
+    <property name="maxInMemorySize" value="4096"/>
+  </bean>
+</beans>

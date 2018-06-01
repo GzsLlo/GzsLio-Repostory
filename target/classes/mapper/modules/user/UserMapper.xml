@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.onmyoji.mapper.modules.onmyoji.UserMapper">
+
+  <select id="selectUserByUsernameAndPassword" parameterType="string" resultType="string">
+  <![CDATA[
+        SELECT
+          CITY_CODE
+        FROM
+          TF_F_ACCT
+        where ACCT_NAME = #{acctName}
+    ]]>
+  </select>
+
+  <insert id="saveUser" parameterType="com.onmyoji.entity.modules.onmyoji.User"
+          useGeneratedKeys="true" keyColumn="PARTITION_ID" keyProperty="partitionId">
+    <![CDATA[
+        INSERT INTO
+            TF_F_ACCT
+            (PARTITION_ID,ACCT_NAME,CITY_CODE,ACCT_TYPE)
+        VALUES
+            (#{partitionId},#{acctName},#{cityCode},#{acctType})
+      ]]>
+  </insert>
+
+
+</mapper>

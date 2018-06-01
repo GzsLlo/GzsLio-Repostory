@@ -1,0 +1,34 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.onmyoji.mapper.modules.onmyoji.OnmyojiMapper">
+
+  <sql id="Onmyoji_Columns">
+    PARTITION_ID,ONMYOJI_ID,ONMYOJI_NAME,NAME_CODE,PASSWORD,REAL_NAME_STATUS,ID_CARD,PROVINCE_CODE,CITY_CODE,EMAIL,
+    PLAYER_LOCKED,LOCKED_TIME,UNLOCK_TIME,OPEN_POSITION,UPDATE_NAME_TIME,PASSWORD_UPDATE_TIME,LAST_LOGIN_TIME,
+    NOW_LOGIN_PROVINCE,NOW_LOGIN_CITY,LAST_LOGIN_PROVICEN,LAST_LOGIN_CITY,CREATE_TIME
+  </sql>
+  
+  <resultMap id="onmyojiResultMap" type="com.onmyoji.entity.modules.onmyoji.Onmyoji">
+    <id column="ONMYOJI_ID" property="onmyojiId" jdbcType="INTEGER"/>
+    <result  column="PARTITION_ID" property="partitionId" jdbcType="INTEGER"/>
+    <result  column="ONMYOJI_NAME" property="onmyojiName" jdbcType="VARCHAR"/>
+    <result  column="NAME_CODE" property="nameCode" jdbcType="INTEGER"/>
+    <result  column="PASSWORD" property="password" jdbcType="VARCHAR"/>
+    <result  column="REAL_NAME_STATUS" property="realNameStatus" jdbcType="INTEGER"/>
+    <result  column="ID_CARD" property="idCard" jdbcType="VARCHAR"/>
+  </resultMap>
+
+  <select id="selectOnmyojiByNameAndPassword" parameterType="com.onmyoji.entity.modules.onmyoji.Onmyoji"
+          resultType="com.onmyoji.entity.modules.onmyoji.Onmyoji">
+    SELECT
+    <include refid="Onmyoji_Columns"/>
+    FROM
+    TF_F_ONMYOJI
+    WHERE
+    ONMYOJI_NAME = ${onmyoji.onmyojiName}
+    AND
+    PASSWORD = ${onmyoji.password}
+  </select>
+
+
+</mapper>
